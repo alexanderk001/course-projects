@@ -9,7 +9,6 @@ We use various boundary conditions.
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 import sympy as sp
 
 t = sp.Symbol("t")
@@ -22,6 +21,7 @@ class VibSolver:
         u'' + w**2 u = f,
 
     """
+    order: int = 0  # The order of the chosen method (VIBSolver is an abstract class, thus order=0)
 
     def __init__(self, Nt: int, T: float, w: float = 0.35, I: float = 1.0) -> None:
         """
@@ -102,7 +102,7 @@ class VibSolver:
         E = []
         dt = []
         self.set_mesh(N0)  # Set initial size of mesh
-        for m in range(m):
+        for _ in range(m):
             self.set_mesh(self.Nt + 10)
             E.append(self.l2_error())
             dt.append(self.dt)
@@ -113,8 +113,18 @@ class VibSolver:
         return r, np.array(E), np.array(dt)
 
     def test_order(self, m: int = 5, N0: int = 100, tol: float = 0.1) -> None:
-        r, E, dt = self.convergence_rates(m, N0)
+        r, _, _ = self.convergence_rates(m, N0)
         assert abs(r[-1] - self.order) < tol
+
+    def __call__(self) -> np.ndarray:
+        """Solve vibration equation
+
+        Returns
+        -------
+        u : array_like
+            The solution at times n*dt, n=0,1,...,Nt
+        """
+        raise NotImplementedError
 
 
 class VibHPL(VibSolver):
@@ -148,7 +158,7 @@ class VibFD2(VibSolver):
 
     def __init__(self, Nt: int, T: float, w: float = 0.35, I: float = 1.0) -> None:
         VibSolver.__init__(self, Nt, T, w, I)
-        T = T * w / np.pi
+        T = float(T * w / np.pi)
         assert T.is_integer() and T % 2 == 0
 
     def __call__(self) -> np.ndarray:
@@ -170,7 +180,7 @@ class VibFD3(VibSolver):
 
     def __init__(self, Nt: int, T: float, w: float = 0.35, I: float = 1.0) -> None:
         VibSolver.__init__(self, Nt, T, w, I)
-        T = T * w / np.pi
+        T = float(T * w / np.pi)
         assert T.is_integer() and T % 2 == 0
 
     def __call__(self) -> np.ndarray:

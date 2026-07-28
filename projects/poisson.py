@@ -24,14 +24,11 @@ class Poisson:
 
     def D2(self, N: int, dx: float) -> sparse.lil_matrix:
         """Return second order differentiation matrix"""
-        # scipy's untyped stubs infer offsets as int from its default value,
-        # so a sequence of offsets is flagged even though it's exactly what
-        # the docs ask for.
         D = cast(
             sparse.lil_matrix,
             sparse.diags(
                 [1, -2, 1],
-                [-1, 0, 1],  # type: ignore[arg-type]
+                [-1, 0, 1],
                 (N + 1, N + 1),
                 format="lil",
             ),

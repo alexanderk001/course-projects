@@ -1,8 +1,11 @@
+from __future__ import annotations
+
+from typing import cast
+
+import matplotlib.pyplot as plt
 import numpy as np
 import sympy as sp
 from scipy import sparse
-import matplotlib.pyplot as plt
-from numbers import Number
 
 x, t, c, L = sp.symbols("x,t,c,L")
 
@@ -27,10 +30,10 @@ class Wave1D:
     def __init__(
         self,
         N: int,
-        L0: Number = 1.0,
-        c0: Number = 1,
-        cfl: Number = 1,
-        u0: sp.Expr = sp.exp(-200 * (x - L / 2 + c * t) ** 2),
+        L0: float = 1.0,
+        c0: float = 1,
+        cfl: float = 1,
+        u0: sp.Expr | None = None,
     ):
         self.N = N
         self.L = L0
@@ -38,12 +41,12 @@ class Wave1D:
         self.cfl = cfl
         self.x = np.linspace(0, L0, N + 1)
         self.dx = L0 / N
-        self.u0 = u0
+        self.u0 = u0 if u0 is not None else sp.exp(-200 * (x - L / 2 + c * t) ** 2) # default initial condition
         self.unp1 = np.zeros(N + 1)
         self.un = np.zeros(N + 1)
         self.unm1 = np.zeros(N + 1)
 
-    def D2(self, bc: int) -> sparse.spmatrix:
+    def D2(self, bc: int) -> sparse.lil_matrix:
         """Return second order differentiation matrix
 
         Paramters
@@ -55,12 +58,12 @@ class Wave1D:
         ----
         The returned matrix is not divided by dx**2
         """
-        D = sparse.diags([1, -2, 1], [-1, 0, 1], (self.N + 1, self.N + 1), "lil")
+        D = cast(sparse.lil_matrix, sparse.diags([1, -2, 1], [-1, 0, 1], (self.N + 1, self.N + 1), "lil"))
         if bc == 1:  # Neumann condition is baked into stencil
-            raise NotImplementedError
+            raise NotImplementedError("Neumann boundary condition is not implemented yet")
 
         elif bc == 3:  # periodic (Note u[0] = u[-1])
-            raise NotImplementedError
+            raise NotImplementedError("Periodic boundary condition is not implemented yet")
 
         return D
 
@@ -89,10 +92,10 @@ class Wave1D:
             pass
 
         elif bc == 2:  # Open boundary
-            raise NotImplementedError
+            raise NotImplementedError("Open boundary condition is not implemented yet")
 
         elif bc == 3:
-            raise NotImplementedError
+            raise NotImplementedError("Periodic boundary condition is not implemented yet")
 
         else:
             raise RuntimeError(f"Wrong bc = {bc}")
@@ -104,7 +107,7 @@ class Wave1D:
     def __call__(
         self,
         Nt: int,
-        cfl: Number | None = None,
+        cfl: float | None = None,
         bc: int = 0,
         ic: int = 0,
         save_step: int = 100,
