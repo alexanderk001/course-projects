@@ -8,8 +8,8 @@ def solver(
     I: float, a: float, T: float, dt: float, theta: float
 ) -> tuple[np.ndarray, np.ndarray]:
     """Solve u'=-a*u, u(0)=I, for t in (0,T] with steps of dt."""
-    Nt = int(T / dt)  # no of time intervals
-    T = Nt * dt  # adjust T to fit time step dt
+    Nt = int(T / dt)      # no of time intervals
+    T = Nt * dt           # adjust T to fit time step dt
     u = np.zeros(Nt + 1)  # array of u[n] values
     t = np.linspace(0, T, Nt + 1)  # time mesh
 

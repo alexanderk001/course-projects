@@ -41,7 +41,9 @@ class Poisson:
         D /= dx**2
         return D
 
-    def assemble(self, N: int, f: sp.Expr, bc: tuple[float, float] = (0, 0)):
+    def assemble(
+        self, N: int, f: sp.Expr, bc: tuple[float, float] = (0, 0)
+    ) -> tuple[sparse.csr_matrix, np.ndarray]:
         """Assemble coefficient matrix and right hand side vector
 
         Parameters
@@ -55,7 +57,7 @@ class Poisson:
 
         Returns
         -------
-        A : scipy sparse matrix
+        A : scipy sparse CSR matrix
             Coefficient matrix
         b : 1D array
             Right hand side vector
