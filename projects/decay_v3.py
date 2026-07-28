@@ -1,10 +1,12 @@
-import numpy as np
+from __future__ import annotations
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def solver(
     I: float, a: float, T: float, dt: float, theta: float
-) -> tuple[np.ndarray, float]:
+) -> tuple[np.ndarray, np.ndarray]:
     """Solve u'=-a*u, u(0)=I, for t in (0,T] with steps of dt."""
     Nt = int(T / dt)  # no of time intervals
     T = Nt * dt  # adjust T to fit time step dt
@@ -12,12 +14,12 @@ def solver(
     t = np.linspace(0, T, Nt + 1)  # time mesh
 
     u[0] = I  # assign initial condition
-    for n in range(0, Nt):
+    for n in range(Nt):
         u[n + 1] = (1 - (1 - theta) * a * dt) / (1 + theta * dt * a) * u[n]
     return u, t
 
 
-def u_exact(t: float, I: float, a: float) -> float:
+def u_exact(t: float | np.ndarray, I: float, a: float) -> float | np.ndarray:
     return I * np.exp(-a * t)
 
 
@@ -39,8 +41,8 @@ def plot_numerical_and_exact(theta: float, I: float, a: float, T: float, dt: flo
     plt.legend(["numerical", "exact"])
     plt.xlabel("t")
     plt.ylabel("u")
-    plt.title("theta=%g, dt=%g" % (theta, dt))
-    plt.savefig("plot_%s_%g.png" % (theta, dt))
+    plt.title(f"theta={theta:g}, dt={dt:g}")
+    plt.savefig(f"plot_{theta}_{dt:g}.png")
 
 
 def test_solver_three_steps():
@@ -49,7 +51,7 @@ def test_solver_three_steps():
     u_by_hand = np.array([I, 0.0298245614035, 0.00889504462912, 0.00265290804728])
 
     Nt = 3  # number of time steps
-    u, t = solver(I, a, Nt * dt, dt, theta)
+    u, _ = solver(I, a, Nt * dt, dt, theta)
 
     tol = 1e-12  # tolerance for comparing floats
     diff = np.abs(u - u_by_hand).max()

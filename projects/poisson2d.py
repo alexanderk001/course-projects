@@ -44,7 +44,7 @@ class Poisson2D:
         """
         raise NotImplementedError
 
-    def __call__(self, f=implemented_function('f', lambda x, y: 2)(x, y)):
+    def __call__(self, f=lambda x, y: 2):
         """Solve Poisson's equation with a given right hand side function
 
         Parameters
@@ -57,7 +57,8 @@ class Poisson2D:
         The solution as a Numpy array
 
         """
-        A, b = self.assemble(f=f)
+        fun = implemented_function('f', f)(x, y)
+        A, b = self.assemble(f=fun)
         return sparse.linalg.spsolve(A, b.ravel()).reshape((self.px.N+1, self.py.N+1))
 
 def test_poisson2d():
