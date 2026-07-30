@@ -1,9 +1,12 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+build-backend = "uv_build"
+
+requires = [
+  "uv-build>=0.8,<0.9",
+]
 
 [project]
-name = "matmek4270-projects"
+name = "course-projects"
 version = "1.0.0"
 description = "Projects for MAT-MEK4270 course - Computational methods in mechanics"
 readme = "README.md"
@@ -17,37 +20,22 @@ classifiers = [
     "Intended Audience :: Education",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Mathematics",
     "Topic :: Education",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
-    "numpy>=2.1",
-    "matplotlib",
-    "sympy",
-    "scipy>=1.13.1",
+    "numpy>=2.2.6",
+    "sympy>=1.14",
+    "scipy>=1.17.1",
+    "pytest-xdist[psutil]>=3.8",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
-    "pytest",
-    "ipython",
-    "jupyter",
-    "black",
-    "isort",
-]
-test = [
-    "pytest",
-]
-
-[tool.uv]
-dev-dependencies = [
-    "pytest>=7.0",
+    "matplotlib>=3.9.3",
     "ipython>=8.0",
-    "jupyter>=1.0",
     "black>=23.0",
     "isort>=5.0",
     "ty>=0.0.64",
@@ -57,31 +45,24 @@ dev-dependencies = [
 Homepage = "https://www.uio.no/studier/emner/matnat/math/MAT-MEK4270/"
 Repository = "https://github.com/MATMEK-4270/course-projects"
 
-[tool.hatch.build.targets.wheel]
-packages = ["projects", "cpyfromhere"]
+[tool.uv.build-backend]
+module-name = "projects"
+module-root = ""
+namespace = true
 
 [tool.pytest.ini_options]
 testpaths = ["projects"]
-python_files = ["test_*.py", "*_test.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = "-v --tb=short"
 
 [tool.black]
 line-length = 88
-target-version = ['py39', 'py310', 'py311', 'py312']
+target-version = ['py312']
 include = '\.pyi?$'
 extend-exclude = '''
 /(
   # directories
   \.eggs
   | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
   | \.venv
-  | build
-  | dist
 )/
 '''
 
