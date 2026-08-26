@@ -15,18 +15,18 @@ def differentiate(u: np.ndarray, dt: float) -> np.ndarray:
 
 
 def test_differentiate_solo():
-    # exact test with a quadratic polynomial: u(t) = 3*t + 2
-    # the exact derivative is: u'(t) = 3
+    # exact test with a quadratic polynomial: u(t) = t**2 + 2 * t + 1
+    # the exact derivative is: u'(t) = 2 * t + 2
 
     t = np.linspace(0, 2, 11)
     dt = t[1] - t[0]
 
-    u = 3 * t + 2
-    expected = 3 * np.ones_like(t)
+    u = t**2 + 2 * t + 1
+    expected = 2 * t + 2 * np.ones_like(t)
 
     computed = differentiate(u, dt)
 
-    assert np.allclose(computed, expected)
+    assert np.allclose(computed[1:-1], expected[1:-1])
 
  
 def differentiate_vector(u: np.ndarray, dt: float) -> np.ndarray:
@@ -54,5 +54,5 @@ def test_differentiate():
 
 
 if __name__ == '__main__':
-    test_differentiate()
     test_differentiate_solo()
+    test_differentiate()
